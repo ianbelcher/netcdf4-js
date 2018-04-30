@@ -85,8 +85,8 @@ void Variable::Write(const v8::FunctionCallbackInfo<v8::Value>& args) {
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Wrong number of arguments")));
         return;
     }
-    size_t pos[obj->ndims];
-    size_t size[obj->ndims];
+    size_t * pos = new size_t[obj->ndims];
+    size_t * size = new size_t[obj->ndims];
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[i]->IntegerValue();
         size[i] = 1;
@@ -142,8 +142,8 @@ void Variable::WriteSlice(const v8::FunctionCallbackInfo<v8::Value>& args) {
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Expecting a typed array")));
         return;
     }
-    size_t pos[obj->ndims];
-    size_t size[obj->ndims];
+    size_t * pos = new size_t[obj->ndims];
+    size_t * size = new size_t[obj->ndims];
     size_t total_size = 1;
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[2 * i]->IntegerValue();
@@ -206,9 +206,9 @@ void Variable::WriteStridedSlice(const v8::FunctionCallbackInfo<v8::Value>& args
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Expecting a typed array")));
         return;
     }
-    size_t pos[obj->ndims];
-    size_t size[obj->ndims];
-    ptrdiff_t stride[obj->ndims];
+    size_t * pos = new size_t[obj->ndims];
+    size_t * size = new size_t[obj->ndims];
+    ptrdiff_t * stride = new ptrdiff_t[obj->ndims];
     size_t total_size = 1;
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[3 * i]->IntegerValue();
@@ -272,8 +272,8 @@ void Variable::Read(const v8::FunctionCallbackInfo<v8::Value>& args) {
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Variable type not supported yet")));
         return;
     }
-    size_t pos[obj->ndims];
-    size_t size[obj->ndims];
+    size_t * pos = new size_t[obj->ndims];
+    size_t * size = new size_t[obj->ndims];
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[i]->IntegerValue();
         size[i] = 1;
@@ -345,8 +345,8 @@ void Variable::ReadSlice(const v8::FunctionCallbackInfo<v8::Value>& args) {
         return;
     }
 
-    size_t pos[obj->ndims];
-    size_t size[obj->ndims];
+    size_t * pos = new size_t[obj->ndims];
+    size_t * size = new size_t[obj->ndims];
     size_t total_size = 1;
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[2 * i]->IntegerValue();
@@ -400,9 +400,9 @@ void Variable::ReadStridedSlice(const v8::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
 
-    size_t pos[obj->ndims];
-    size_t size[obj->ndims];
-    ptrdiff_t stride[obj->ndims];
+    size_t * pos = new size_t[obj->ndims];
+    size_t * size = new size_t[obj->ndims];
+    ptrdiff_t * stride = new ptrdiff_t[obj->ndims];
     size_t total_size = 1;
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[3 * i]->IntegerValue();
@@ -472,7 +472,7 @@ void Variable::GetId(v8::Local<v8::String> property, const v8::PropertyCallbackI
 void Variable::GetDimensions(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) {
     v8::Isolate* isolate = info.GetIsolate();
     Variable* obj = node::ObjectWrap::Unwrap<Variable>(info.Holder());
-    int dim_ids[obj->ndims];
+    int * dim_ids = new int[obj->ndims];
     call_netcdf(nc_inq_vardimid(obj->parent_id, obj->id, dim_ids));
     v8::Local<v8::Array> result = v8::Array::New(isolate);
     for (int i = 0; i < obj->ndims; i++) {
@@ -636,7 +636,7 @@ void Variable::SetChunkMode(v8::Local<v8::String> property, v8::Local<v8::Value>
     }
     int len;
     call_netcdf(nc_inq_varndims(obj->parent_id, obj->id, &len));
-    size_t sizes[len];
+    size_t * sizes = new size_t[len];
     call_netcdf(nc_inq_var_chunking(obj->parent_id, obj->id, NULL, sizes));
     call_netcdf(nc_def_var_chunking(obj->parent_id, obj->id, v, sizes));
 }
@@ -644,7 +644,7 @@ void Variable::SetChunkMode(v8::Local<v8::String> property, v8::Local<v8::Value>
 void Variable::GetChunkSizes(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) {
     v8::Isolate* isolate = info.GetIsolate();
     Variable* obj = node::ObjectWrap::Unwrap<Variable>(info.Holder());
-    size_t sizes[obj->ndims];
+    size_t * sizes = new size_t[obj->ndims];
     call_netcdf(nc_inq_var_chunking(obj->parent_id, obj->id, NULL, sizes));
     v8::Local<v8::Array> result = v8::Array::New(isolate);
     for (int i = 0; i < obj->ndims; i++) {
@@ -667,7 +667,7 @@ void Variable::SetChunkSizes(v8::Local<v8::String> property, v8::Local<v8::Value
     }
     int v;
     call_netcdf(nc_inq_var_chunking(obj->parent_id, obj->id, &v, NULL));
-    size_t sizes[obj->ndims];
+    size_t * sizes = new size_t[obj->ndims];
     for (int i = 0; i < obj->ndims; i++) {
         sizes[i] = array->Get(i)->Uint32Value();
     }
@@ -694,7 +694,7 @@ void Variable::SetFillMode(v8::Local<v8::String> property, v8::Local<v8::Value> 
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Variable type not supported yet")));
         return;
     }
-    uint8_t value[type_sizes[obj->type]];
+    uint8_t * value = new uint8_t[type_sizes[obj->type]];
     call_netcdf(nc_inq_var_fill(obj->parent_id, obj->id, NULL, value));
     call_netcdf(nc_def_var_fill(obj->parent_id, obj->id, v, value));
 }
