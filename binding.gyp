@@ -2,7 +2,7 @@
   "targets": [
     {
       "libraries": [
-        "-lnetcdf"
+        "-lC:\\Program Files\\netCDF 4.6.1\\lib\\netcdf.lib"
       ],
       "sources": [
         "src/Group.cpp",
