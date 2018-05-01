@@ -61,11 +61,11 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
     switch (obj->type) {
         case NC_BYTE: {
             std::vector<int8_t> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v[0]));
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Int8Array::New(v8::ArrayBuffer::New(isolate, &v, len * 1), 0, len));
+                info.GetReturnValue().Set(v8::Int8Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 1), 0, len));
             }
         } break;
         case NC_SHORT: {
@@ -74,7 +74,7 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Int16Array::New(v8::ArrayBuffer::New(isolate, &v, len * 2), 0, len));
+                info.GetReturnValue().Set(v8::Int16Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 2), 0, len));
             }
         } break;
         case NC_INT: {
@@ -83,7 +83,7 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Int32Array::New(v8::ArrayBuffer::New(isolate, &v, len * 4), 0, len));
+                info.GetReturnValue().Set(v8::Int32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 4), 0, len));
             }
         } break;
         case NC_FLOAT: {
@@ -92,7 +92,7 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Number::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Float32Array::New(v8::ArrayBuffer::New(isolate, &v, len * 4), 0, len));
+                info.GetReturnValue().Set(v8::Float32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 4), 0, len));
             }
         } break;
         case NC_DOUBLE: {
@@ -101,7 +101,7 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Number::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Float64Array::New(v8::ArrayBuffer::New(isolate, &v, len * 8), 0, len));
+                info.GetReturnValue().Set(v8::Float64Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 8), 0, len));
             }
         } break;
         case NC_UBYTE: {
@@ -110,7 +110,7 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Uint8Array::New(v8::ArrayBuffer::New(isolate, &v, len * 1), 0, len));
+                info.GetReturnValue().Set(v8::Uint8Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 1), 0, len));
             }
         } break;
         case NC_USHORT: {
@@ -119,7 +119,7 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Uint16Array::New(v8::ArrayBuffer::New(isolate, &v, len * 2), 0, len));
+                info.GetReturnValue().Set(v8::Uint16Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 2), 0, len));
             }
         } break;
         case NC_UINT: {
@@ -128,7 +128,7 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Uint32Array::New(v8::ArrayBuffer::New(isolate, &v, len * 4), 0, len));
+                info.GetReturnValue().Set(v8::Uint32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 4), 0, len));
             }
         } break;
         case NC_INT64: {
@@ -137,7 +137,7 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Int32Array::New(v8::ArrayBuffer::New(isolate, &v, len * 8), 0, len));
+                info.GetReturnValue().Set(v8::Int32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 8), 0, len));
             }
         } break;
         case NC_UINT64: {
@@ -146,7 +146,7 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
             if (len == 1) {
                 info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
             } else {
-                info.GetReturnValue().Set(v8::Uint32Array::New(v8::ArrayBuffer::New(isolate, &v, len * 8), 0, len));
+                info.GetReturnValue().Set(v8::Uint32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 8), 0, len));
             }
         } break;
         case NC_CHAR:

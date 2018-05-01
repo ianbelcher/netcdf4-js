@@ -667,11 +667,11 @@ void Variable::SetChunkSizes(v8::Local<v8::String> property, v8::Local<v8::Value
     }
     int v;
     call_netcdf(nc_inq_var_chunking(obj->parent_id, obj->id, &v, NULL));
-    size_t * sizes = new size_t[obj->ndims];
+    std::vector<size_t> sizes(obj->ndims);
     for (int i = 0; i < obj->ndims; i++) {
         sizes[i] = array->Get(i)->Uint32Value();
     }
-    call_netcdf(nc_def_var_chunking(obj->parent_id, obj->id, v, sizes));
+    call_netcdf(nc_def_var_chunking(obj->parent_id, obj->id, v, &sizes[0]));
 }
 
 void Variable::GetFillMode(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) {
