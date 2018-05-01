@@ -85,8 +85,8 @@ void Variable::Write(const v8::FunctionCallbackInfo<v8::Value>& args) {
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Wrong number of arguments")));
         return;
     }
-    size_t * pos = new size_t[obj->ndims];
-    size_t * size = new size_t[obj->ndims];
+    std::vector<size_t> pos(obj->ndims);
+    std::vector<size_t> size(obj->ndims);
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[i]->IntegerValue();
         size[i] = 1;
@@ -95,35 +95,35 @@ void Variable::Write(const v8::FunctionCallbackInfo<v8::Value>& args) {
         case NC_BYTE:
         case NC_CHAR: {
             int8_t v = args[obj->ndims]->Int32Value();
-            call_netcdf(nc_put_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_put_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
         } break;
         case NC_SHORT: {
             int16_t v = args[obj->ndims]->Int32Value();
-            call_netcdf(nc_put_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_put_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
         } break;
         case NC_INT: {
             int32_t v = args[obj->ndims]->Int32Value();
-            call_netcdf(nc_put_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_put_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
         } break;
         case NC_FLOAT: {
             float v = args[obj->ndims]->NumberValue();
-            call_netcdf(nc_put_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_put_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
         } break;
         case NC_DOUBLE: {
             double v = args[obj->ndims]->NumberValue();
-            call_netcdf(nc_put_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_put_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
         } break;
         case NC_UBYTE: {
             uint8_t v = args[obj->ndims]->Uint32Value();
-            call_netcdf(nc_put_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_put_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
         } break;
         case NC_USHORT: {
             uint16_t v = args[obj->ndims]->Uint32Value();
-            call_netcdf(nc_put_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_put_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
         } break;
         case NC_UINT: {
             uint32_t v = args[obj->ndims]->Uint32Value();
-            call_netcdf(nc_put_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_put_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
         } break;
         default:
             isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Variable type not supported yet")));
@@ -142,8 +142,8 @@ void Variable::WriteSlice(const v8::FunctionCallbackInfo<v8::Value>& args) {
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Expecting a typed array")));
         return;
     }
-    size_t * pos = new size_t[obj->ndims];
-    size_t * size = new size_t[obj->ndims];
+    std::vector<size_t> pos(obj->ndims);
+    std::vector<size_t> size(obj->ndims);
     size_t total_size = 1;
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[2 * i]->IntegerValue();
@@ -192,7 +192,7 @@ void Variable::WriteSlice(const v8::FunctionCallbackInfo<v8::Value>& args) {
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Wrong array type")));
         return;
     }
-    call_netcdf(nc_put_vara(obj->parent_id, obj->id, pos, size, val->Buffer()->GetContents().Data()));
+    call_netcdf(nc_put_vara(obj->parent_id, obj->id, &pos[0], &size[0], val->Buffer()->GetContents().Data()));
 }
 
 void Variable::WriteStridedSlice(const v8::FunctionCallbackInfo<v8::Value>& args) {
@@ -206,9 +206,9 @@ void Variable::WriteStridedSlice(const v8::FunctionCallbackInfo<v8::Value>& args
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Expecting a typed array")));
         return;
     }
-    size_t * pos = new size_t[obj->ndims];
-    size_t * size = new size_t[obj->ndims];
-    ptrdiff_t * stride = new ptrdiff_t[obj->ndims];
+    std::vector<size_t> pos(obj->ndims);
+    std::vector<size_t> size(obj->ndims);
+    std::vector<ptrdiff_t> stride(obj->ndims);
     size_t total_size = 1;
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[3 * i]->IntegerValue();
@@ -258,7 +258,7 @@ void Variable::WriteStridedSlice(const v8::FunctionCallbackInfo<v8::Value>& args
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Wrong array type")));
         return;
     }
-    call_netcdf(nc_put_vars(obj->parent_id, obj->id, pos, size, stride, val->Buffer()->GetContents().Data()));
+    call_netcdf(nc_put_vars(obj->parent_id, obj->id, &pos[0], &size[0], &stride[0], val->Buffer()->GetContents().Data()));
 }
 
 void Variable::Read(const v8::FunctionCallbackInfo<v8::Value>& args) {
@@ -272,8 +272,8 @@ void Variable::Read(const v8::FunctionCallbackInfo<v8::Value>& args) {
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Variable type not supported yet")));
         return;
     }
-    size_t * pos = new size_t[obj->ndims];
-    size_t * size = new size_t[obj->ndims];
+    std::vector<size_t> pos(obj->ndims);
+    std::vector<size_t> size(obj->ndims);
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[i]->IntegerValue();
         size[i] = 1;
@@ -282,48 +282,48 @@ void Variable::Read(const v8::FunctionCallbackInfo<v8::Value>& args) {
     switch (obj->type) {
         case NC_BYTE: {
             int8_t v;
-            call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
             result = v8::Integer::New(isolate, v);
         } break;
         case NC_CHAR: {
             char v[2];
             v[1] = 0;
-            call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
             result = v8::String::NewFromUtf8(isolate, v);
         } break;
         case NC_SHORT: {
             int16_t v;
-            call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
             result = v8::Integer::New(isolate, v);
         } break;
         case NC_INT: {
             int32_t v;
-            call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
             result = v8::Integer::New(isolate, v);
         } break;
         case NC_FLOAT: {
             float v;
-            call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
             result = v8::Number::New(isolate, v);
         } break;
         case NC_DOUBLE: {
             double v;
-            call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
             result = v8::Number::New(isolate, v);
         } break;
         case NC_UBYTE: {
             uint8_t v;
-            call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
             result = v8::Integer::New(isolate, v);
         } break;
         case NC_USHORT: {
             uint16_t v;
-            call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
             result = v8::Integer::New(isolate, v);
         } break;
         case NC_UINT: {
             uint32_t v;
-            call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, &v));
+            call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], &v));
             result = v8::Integer::New(isolate, v);
         } break;
         default:
@@ -345,8 +345,8 @@ void Variable::ReadSlice(const v8::FunctionCallbackInfo<v8::Value>& args) {
         return;
     }
 
-    size_t * pos = new size_t[obj->ndims];
-    size_t * size = new size_t[obj->ndims];
+    std::vector<size_t> pos(obj->ndims);
+    std::vector<size_t> size(obj->ndims);
     size_t total_size = 1;
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[2 * i]->IntegerValue();
@@ -355,7 +355,7 @@ void Variable::ReadSlice(const v8::FunctionCallbackInfo<v8::Value>& args) {
         total_size *= s;
     }
     v8::Local<v8::ArrayBuffer> buffer = v8::ArrayBuffer::New(isolate, total_size * type_sizes[obj->type]);
-    call_netcdf(nc_get_vara(obj->parent_id, obj->id, pos, size, buffer->GetContents().Data()));
+    call_netcdf(nc_get_vara(obj->parent_id, obj->id, &pos[0], &size[0], buffer->GetContents().Data()));
     v8::Local<v8::Object> result;
 
     switch (obj->type) {
@@ -400,9 +400,9 @@ void Variable::ReadStridedSlice(const v8::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
 
-    size_t * pos = new size_t[obj->ndims];
-    size_t * size = new size_t[obj->ndims];
-    ptrdiff_t * stride = new ptrdiff_t[obj->ndims];
+    std::vector<size_t> pos(obj->ndims);
+    std::vector<size_t> size(obj->ndims);
+    std::vector<ptrdiff_t> stride(obj->ndims);
     size_t total_size = 1;
     for (int i = 0; i < obj->ndims; i++) {
         pos[i] = args[3 * i]->IntegerValue();
@@ -412,7 +412,7 @@ void Variable::ReadStridedSlice(const v8::FunctionCallbackInfo<v8::Value>& args)
         stride[i] = args[3 * i + 2]->IntegerValue();
     }
     v8::Local<v8::ArrayBuffer> buffer = v8::ArrayBuffer::New(isolate, total_size * type_sizes[obj->type]);
-    call_netcdf(nc_get_vars(obj->parent_id, obj->id, pos, size, stride, buffer->GetContents().Data()));
+    call_netcdf(nc_get_vars(obj->parent_id, obj->id, &pos[0], &size[0], &stride[0], buffer->GetContents().Data()));
     v8::Local<v8::Object> result;
 
     switch (obj->type) {
@@ -472,8 +472,8 @@ void Variable::GetId(v8::Local<v8::String> property, const v8::PropertyCallbackI
 void Variable::GetDimensions(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) {
     v8::Isolate* isolate = info.GetIsolate();
     Variable* obj = node::ObjectWrap::Unwrap<Variable>(info.Holder());
-    int * dim_ids = new int[obj->ndims];
-    call_netcdf(nc_inq_vardimid(obj->parent_id, obj->id, dim_ids));
+    std::vector<int> dim_ids(obj->ndims);
+    call_netcdf(nc_inq_vardimid(obj->parent_id, obj->id, &dim_ids[0]));
     v8::Local<v8::Array> result = v8::Array::New(isolate);
     for (int i = 0; i < obj->ndims; i++) {
         Dimension* d = new Dimension(dim_ids[i], obj->parent_id);
@@ -636,16 +636,16 @@ void Variable::SetChunkMode(v8::Local<v8::String> property, v8::Local<v8::Value>
     }
     int len;
     call_netcdf(nc_inq_varndims(obj->parent_id, obj->id, &len));
-    size_t * sizes = new size_t[len];
-    call_netcdf(nc_inq_var_chunking(obj->parent_id, obj->id, NULL, sizes));
-    call_netcdf(nc_def_var_chunking(obj->parent_id, obj->id, v, sizes));
+    std::vector<size_t> sizes(len);
+    call_netcdf(nc_inq_var_chunking(obj->parent_id, obj->id, NULL, &sizes[0]));
+    call_netcdf(nc_def_var_chunking(obj->parent_id, obj->id, v, &sizes[0]));
 }
 
 void Variable::GetChunkSizes(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) {
     v8::Isolate* isolate = info.GetIsolate();
     Variable* obj = node::ObjectWrap::Unwrap<Variable>(info.Holder());
-    size_t * sizes = new size_t[obj->ndims];
-    call_netcdf(nc_inq_var_chunking(obj->parent_id, obj->id, NULL, sizes));
+    std::vector<size_t> sizes(obj->ndims);
+    call_netcdf(nc_inq_var_chunking(obj->parent_id, obj->id, NULL, &sizes[0]));
     v8::Local<v8::Array> result = v8::Array::New(isolate);
     for (int i = 0; i < obj->ndims; i++) {
         result->Set(i, v8::Integer::New(isolate, i));
@@ -694,9 +694,9 @@ void Variable::SetFillMode(v8::Local<v8::String> property, v8::Local<v8::Value> 
         isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8(isolate, "Variable type not supported yet")));
         return;
     }
-    uint8_t * value = new uint8_t[type_sizes[obj->type]];
-    call_netcdf(nc_inq_var_fill(obj->parent_id, obj->id, NULL, value));
-    call_netcdf(nc_def_var_fill(obj->parent_id, obj->id, v, value));
+    std::vector<uint8_t> value(type_sizes[obj->type]);
+    call_netcdf(nc_inq_var_fill(obj->parent_id, obj->id, NULL, &value[0]));
+    call_netcdf(nc_def_var_fill(obj->parent_id, obj->id, v, &value[0]));
 }
 
 void Variable::GetFillValue(v8::Local<v8::String> property, const v8::PropertyCallbackInfo<v8::Value>& info) {

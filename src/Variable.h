@@ -1,7 +1,7 @@
 #ifndef NETCDF4JS_VARIABLE_H
 #define NETCDF4JS_VARIABLE_H
 
-#include "C:\Program Files\netCDF 4.6.1\include\netcdf.h"
+#include <netcdf.h>
 #include <node.h>
 #include <node_object_wrap.h>
 

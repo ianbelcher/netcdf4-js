@@ -1,5 +1,5 @@
 #include "Group.h"
-#include "C:\Program Files\netCDF 4.6.1\include\netcdf.h"
+#include <netcdf.h>
 #include "Attribute.h"
 #include "Dimension.h"
 #include "Variable.h"
@@ -118,12 +118,12 @@ void Group::AddVariable(const v8::FunctionCallbackInfo<v8::Value>& args) {
     }
     v8::Local<v8::Object> array = args[2]->ToObject();
     size_t ndims = array->Get(v8::String::NewFromUtf8(isolate, "length"))->Uint32Value();
-    int * dimids = new int[ndims];
+    std::vector<int> dimids(ndims);
     for (size_t i = 0; i < ndims; i++) {
         dimids[i] = array->Get(i)->Int32Value();
     }
     int new_id;
-    call_netcdf(nc_def_var(obj->id, *v8::String::Utf8Value(args[0]), type, ndims, dimids, &new_id));
+    call_netcdf(nc_def_var(obj->id, *v8::String::Utf8Value(args[0]), type, ndims, &dimids[0], &new_id));
     Variable* res = new Variable(new_id, obj->id);
     args.GetReturnValue().Set(res->handle());
 }
@@ -139,8 +139,8 @@ void Group::GetVariables(v8::Local<v8::String> property, const v8::PropertyCallb
     Group* obj = node::ObjectWrap::Unwrap<Group>(info.Holder());
     int nvars;
     call_netcdf(nc_inq_varids(obj->id, &nvars, NULL));
-    int * var_ids = new int[nvars];
-    call_netcdf(nc_inq_varids(obj->id, NULL, var_ids));
+    std::vector<int> var_ids(nvars);
+    call_netcdf(nc_inq_varids(obj->id, NULL, &var_ids[0]));
     v8::Local<v8::Object> result = v8::Object::New(isolate);
     char name[NC_MAX_NAME + 1];
     for (int i = 0; i < nvars; i++) {
@@ -160,8 +160,8 @@ void Group::GetDimensions(v8::Local<v8::String> property, const v8::PropertyCall
     Group* obj = node::ObjectWrap::Unwrap<Group>(info.Holder());
     int ndims;
     call_netcdf(nc_inq_dimids(obj->id, &ndims, NULL, 0));
-    int * dim_ids = new int[ndims];
-    call_netcdf(nc_inq_dimids(obj->id, NULL, dim_ids, 0));
+    std::vector<int> dim_ids(ndims);
+    call_netcdf(nc_inq_dimids(obj->id, NULL, &dim_ids[0], 0));
     v8::Local<v8::Object> result = v8::Object::New(isolate);
     char name[NC_MAX_NAME + 1];
     for (int i = 0; i < ndims; i++) {
@@ -181,8 +181,8 @@ void Group::GetUnlimited(v8::Local<v8::String> property, const v8::PropertyCallb
     Group* obj = node::ObjectWrap::Unwrap<Group>(info.Holder());
     int ndims;
     call_netcdf(nc_inq_unlimdims(obj->id, &ndims, NULL));
-    int * dim_ids = new int[ndims];
-    call_netcdf(nc_inq_unlimdims(obj->id, NULL, dim_ids));
+    std::vector<int> dim_ids(ndims);
+    call_netcdf(nc_inq_unlimdims(obj->id, NULL, &dim_ids[0]));
     v8::Local<v8::Object> result = v8::Object::New(isolate);
     char name[NC_MAX_NAME + 1];
     for (int i = 0; i < ndims; i++) {
@@ -203,11 +203,11 @@ void Group::GetAttributes(v8::Local<v8::String> property, const v8::PropertyCall
     int natts;
     call_netcdf(nc_inq_natts(obj->id, &natts));
     v8::Local<v8::Object> result = v8::Object::New(isolate);
-    char * name = new char[NC_MAX_NAME + 1];
+    std::vector<char> name(NC_MAX_NAME + 1);
     for (int i = 0; i < natts; i++) {
-        call_netcdf(nc_inq_attname(obj->id, NC_GLOBAL, i, name));
-        Attribute* a = new Attribute(name, NC_GLOBAL, obj->id);
-        result->Set(v8::String::NewFromUtf8(isolate, name), a->handle());
+        call_netcdf(nc_inq_attname(obj->id, NC_GLOBAL, i, &name[0]));
+        Attribute* a = new Attribute(&name[0], NC_GLOBAL, obj->id);
+        result->Set(v8::String::NewFromUtf8(isolate, &name[0]), a->handle());
     }
     info.GetReturnValue().Set(result);
 }
@@ -217,8 +217,8 @@ void Group::GetSubgroups(v8::Local<v8::String> property, const v8::PropertyCallb
     Group* obj = node::ObjectWrap::Unwrap<Group>(info.Holder());
     int ngrps;
     call_netcdf(nc_inq_grps(obj->id, &ngrps, NULL));
-    int * grp_ids = new int[ngrps];
-    call_netcdf(nc_inq_grps(obj->id, NULL, grp_ids));
+    std::vector<int> grp_ids(ngrps);
+    call_netcdf(nc_inq_grps(obj->id, NULL, &grp_ids[0]));
     v8::Local<v8::Object> result = v8::Object::New(isolate);
     char name[NC_MAX_NAME + 1];
     for (int i = 0; i < ngrps; i++) {
@@ -247,10 +247,10 @@ void Group::GetFullname(v8::Local<v8::String> property, const v8::PropertyCallba
     Group* obj = node::ObjectWrap::Unwrap<Group>(info.Holder());
     size_t len;
     call_netcdf(nc_inq_grpname_len(obj->id, &len));
-    char * name = new char[len + 1];
+    std::vector<char> name(len + 1);
     name[len] = 0;
-    call_netcdf(nc_inq_grpname_full(obj->id, NULL, name));
-    info.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, name));
+    call_netcdf(nc_inq_grpname_full(obj->id, NULL, &name[0]));
+    info.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, &name[0]));
 }
 
 void Group::Inspect(const v8::FunctionCallbackInfo<v8::Value>& args) {

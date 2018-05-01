@@ -1,5 +1,5 @@
 #include "File.h"
-#include "C:\Program Files\netCDF 4.6.1\include\netcdf.h"
+#include <netcdf.h>
 #include <string>
 #include "Group.h"
 #include "Variable.h"
