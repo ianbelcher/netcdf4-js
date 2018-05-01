@@ -1,9 +1,6 @@
 {
   "targets": [
     {
-      "libraries": [
-        "-lnetcdf"
-      ],
       "sources": [
         "src/Group.cpp",
         "src/File.cpp",
@@ -16,8 +13,16 @@
       "conditions": [
         ['OS=="win"', {
           "include_dirs": [
-            "C:\\Program Files\\netCDF 4.6.1\\lib"
+            "C:\\Program Files\\netCDF 4.6.1\\include"
+          ],
+          "libraries": [
+            "-lC:\\Program Files\\netCDF 4.6.1\\lib\\netcdf.lib"
           ]
+        }],
+        ['OS!="win"', {
+          "libraries": [
+            "-lnetcdf"
+          ],
         }]
       ]
     }
