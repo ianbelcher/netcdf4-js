@@ -60,92 +60,112 @@ void Attribute::GetValue(v8::Local<v8::String> property, const v8::PropertyCallb
 
     switch (obj->type) {
         case NC_BYTE: {
-            std::vector<int8_t> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v[0]));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
+                int8_t v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Integer::New(isolate, v));
             } else {
+                std::vector<int8_t> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v[0]));
                 info.GetReturnValue().Set(v8::Int8Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 1), 0, len));
             }
         } break;
         case NC_SHORT: {
-            std::vector<int16_t> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
+                int16_t v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Integer::New(isolate, v));
             } else {
+                std::vector<int16_t> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
                 info.GetReturnValue().Set(v8::Int16Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 2), 0, len));
             }
         } break;
         case NC_INT: {
-            std::vector<int32_t> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
+                int32_t v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Integer::New(isolate, v));
             } else {
+                std::vector<int32_t> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
                 info.GetReturnValue().Set(v8::Int32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 4), 0, len));
             }
         } break;
         case NC_FLOAT: {
-            std::vector<float> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Number::New(isolate, v[0]));
+                float v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Number::New(isolate, v));
             } else {
+                std::vector<float> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
                 info.GetReturnValue().Set(v8::Float32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 4), 0, len));
             }
         } break;
         case NC_DOUBLE: {
-            std::vector<double> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Number::New(isolate, v[0]));
+                double v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Number::New(isolate, v));
             } else {
+                std::vector<double> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
                 info.GetReturnValue().Set(v8::Float64Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 8), 0, len));
             }
         } break;
         case NC_UBYTE: {
-            std::vector<uint8_t> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
+                uint8_t v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Integer::New(isolate, v));
             } else {
+                std::vector<uint8_t> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
                 info.GetReturnValue().Set(v8::Uint8Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 1), 0, len));
             }
         } break;
         case NC_USHORT: {
-            std::vector<uint16_t> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
+                uint16_t v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Integer::New(isolate, v));
             } else {
+                std::vector<uint16_t> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
                 info.GetReturnValue().Set(v8::Uint16Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 2), 0, len));
             }
         } break;
         case NC_UINT: {
-            std::vector<uint32_t> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
+                uint32_t v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Integer::New(isolate, v));
             } else {
+                std::vector<uint32_t> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
                 info.GetReturnValue().Set(v8::Uint32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 4), 0, len));
             }
         } break;
         case NC_INT64: {
-            std::vector<int64_t> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
+                int64_t v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Integer::New(isolate, v));
             } else {
+                std::vector<int64_t> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
                 info.GetReturnValue().Set(v8::Int32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 8), 0, len));
             }
         } break;
         case NC_UINT64: {
-            std::vector<uint64_t> v(len);
-            call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
             if (len == 1) {
-                info.GetReturnValue().Set(v8::Integer::New(isolate, v[0]));
+                uint64_t v;
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
+                info.GetReturnValue().Set(v8::Integer::New(isolate, v));
             } else {
+                std::vector<uint64_t> v(len);
+                call_netcdf(nc_get_att(obj->parent_id, obj->var_id, obj->name.c_str(), &v));
                 info.GetReturnValue().Set(v8::Uint32Array::New(v8::ArrayBuffer::New(isolate, &v[0], len * 8), 0, len));
             }
         } break;
