@@ -1,5 +1,6 @@
 declare module "netcdf4" {
   export class File{
+    constructor(filePath: string, mode: string)
     root: Group
     close(): void
     sync(): void
@@ -49,7 +50,7 @@ declare module "netcdf4" {
     readonly variables: Variable[]
     readonly dimensions: Dimension[]
     readonly unlimited: Dimension[]
-    readonly attribute: Attribute[]
+    readonly attributes: Attribute[]
     readonly subgroups: Group[]
     addVariable(name: string, type: "byte" | "char", dimensions: number[]): Variable
     addDimension(name: string, length: number | "unlimited"): void
