@@ -3,6 +3,7 @@
   "version": "0.3.1",
   "description": "Read and write NetCDF4 files",
   "main": "./build/Release/netcdf4.node",
+  "types": "./netcdf4.d.ts",
   "scripts": {
     "install": "node-gyp rebuild",
     "test": "node_modules/mocha/bin/mocha"
