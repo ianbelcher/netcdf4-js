@@ -23,8 +23,8 @@ declare module "netcdf4" {
     readonly id: number
     name: string
     readonly type: string
-    readonly attributes: Attribute[]
-    readonly dimensions: Dimension[]
+    readonly attributes: {[key: string]: Attribute}
+    readonly dimensions: {[key: string]: Dimension}
     endianness: string
     checksummode: string
     chunkmode: string
@@ -47,10 +47,10 @@ declare module "netcdf4" {
     readonly id: number
     readonly name: string
     readonly fullname: string
-    readonly variables: Variable[]
-    readonly dimensions: Dimension[]
-    readonly unlimited: Dimension[]
-    readonly attributes: Attribute[]
+    readonly variables: {[key: string]: Variable}
+    readonly dimensions: {[key: string]: Dimension}
+    readonly unlimited: {[key: string]: Dimension}
+    readonly attributes: {[key: string]: Attribute}
     readonly subgroups: Group[]
     addVariable(name: string, type: "byte" | "char", dimensions: number[]): Variable
     addDimension(name: string, length: number | "unlimited"): void
