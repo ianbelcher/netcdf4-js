@@ -24,7 +24,7 @@ declare module "netcdf4" {
     name: string
     readonly type: string
     readonly attributes: Attribute[]
-    readonly dimension: Dimension[]
+    readonly dimensions: Dimension[]
     endianness: string
     checksummode: string
     chunkmode: string
