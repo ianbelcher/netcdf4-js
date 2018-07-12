@@ -51,7 +51,7 @@ declare module "netcdf4" {
     readonly dimensions: {[key: string]: Dimension}
     readonly unlimited: {[key: string]: Dimension}
     readonly attributes: {[key: string]: Attribute}
-    readonly subgroups: Group[]
+    readonly subgroups: {[key: string]: Group}
     addVariable(name: string, type: "byte" | "char", dimensions: number[]): Variable
     addDimension(name: string, length: number | "unlimited"): void
   }
