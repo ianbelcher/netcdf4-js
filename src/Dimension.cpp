@@ -1,6 +1,7 @@
 #include "Dimension.h"
 #include <netcdf.h>
 #include "netcdf4js.h"
+#include <nan.h>
 
 namespace netcdf4js {
 
@@ -8,8 +9,10 @@ v8::Persistent<v8::Function> Dimension::constructor;
 
 Dimension::Dimension(const int& id_, const int& parent_id_) : id(id_), parent_id(parent_id_) {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-    v8::Local<v8::Object> obj = v8::Local<v8::Function>::New(isolate, constructor)->NewInstance();
-    Wrap(obj);
+    const int argc = 1;
+    v8::Local<v8::Value> argv[argc] = {};
+    v8::Local<v8::Function> cons = v8::Local<v8::Function>::New(isolate, constructor);
+    Wrap(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
 }
 
 void Dimension::Init(v8::Local<v8::Object> exports) {

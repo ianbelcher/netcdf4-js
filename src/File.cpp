@@ -4,6 +4,7 @@
 #include "Group.h"
 #include "Variable.h"
 #include "netcdf4js.h"
+#include <nan.h>
 
 namespace netcdf4js {
 
@@ -77,7 +78,7 @@ void File::New(const v8::FunctionCallbackInfo<v8::Value>& args) {
         const int argc = 1;
         v8::Local<v8::Value> argv[argc] = {args[0]};
         v8::Local<v8::Function> cons = v8::Local<v8::Function>::New(isolate, constructor);
-        args.GetReturnValue().Set(cons->NewInstance(argc, argv));
+        args.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
     }
 }
 

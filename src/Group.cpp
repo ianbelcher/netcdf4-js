@@ -4,6 +4,7 @@
 #include "Dimension.h"
 #include "Variable.h"
 #include "netcdf4js.h"
+#include <nan.h>
 
 namespace netcdf4js {
 
@@ -11,8 +12,10 @@ v8::Persistent<v8::Function> Group::constructor;
 
 Group::Group(const int& id_) : id(id_) {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
-    v8::Local<v8::Object> obj = v8::Local<v8::Function>::New(isolate, constructor)->NewInstance();
-    Wrap(obj);
+    const int argc = 1;
+    v8::Local<v8::Value> argv[argc] = {};
+    v8::Local<v8::Function> cons = v8::Local<v8::Function>::New(isolate, constructor);
+    Wrap(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
 }
 
 void Group::Init(v8::Local<v8::Object> exports) {
