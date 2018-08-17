@@ -13,7 +13,7 @@ Attribute::Attribute(const char* name_, int var_id_, int parent_id_) : name(name
     call_netcdf(nc_inq_atttype(parent_id, var_id_, name_, &type));
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     const int argc = 1;
-    v8::Local<v8::Value> argv[argc] = {};
+    v8::Local<v8::Value> argv[argc] = Nan::New<v8::Object>();
     v8::Local<v8::Function> cons = v8::Local<v8::Function>::New(isolate, constructor);
     Wrap(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
 }
@@ -21,7 +21,7 @@ Attribute::Attribute(const char* name_, int var_id_, int parent_id_) : name(name
 Attribute::Attribute(const char* name_, int var_id_, int parent_id_, int type_) : name(name_), var_id(var_id_), parent_id(parent_id_), type(type_) {
     v8::Isolate* isolate = v8::Isolate::GetCurrent();
     const int argc = 1;
-    v8::Local<v8::Value> argv[argc] = {};
+    v8::Local<v8::Value> argv[argc] = Nan::New<v8::Object>();
     v8::Local<v8::Function> cons = v8::Local<v8::Function>::New(isolate, constructor);
     Wrap(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
 }
